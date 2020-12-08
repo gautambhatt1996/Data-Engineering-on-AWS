@@ -1,0 +1,17 @@
+#To create a EMR Cluster from CLI
+aws emr create-cluster --name <Clustername here> --release-label emr-5.25.0 \
+--applications Name=Hadoop Name=Hive Name=Pig Name=Presto \
+--use-default-roles --ec2-attributes KeyName=admin \
+--instance-groups InstanceGroupType=MASTER,InstanceCount=1,InstanceType=m4.large,BidPrice=0.5 InstanceGroupType=CORE,InstanceCount=1,InstanceType=m4.large,BidPrice=0.5 \
+--log-uri <s3 log bucket path here> --enable-debugging
+
+#To add steps in the running cluster from the CLI
+aws emr add-steps --cluster-id <paste CLUSTER_ID here> --steps file:///home/ec2-user/copy.json  --region us-east-1
+
+aws emr add-steps --cluster-id <paste cluster id here> --steps Type=<Specify the type of step you want to run>,Name="<Provide a custom step name>",ActionOnFailure=CONTINUE,Args=[-f,<path where script is be it s3 or any place>,-d,INPUT=<path where the input files are there>,-d,OUTPUT=<path where output will be generated>] --region us-east-1
+
+#To list the steps from the CLI
+aws emr list-steps --cluster-id <paste cluster id here> --step-ids --region us-east-1
+
+#To terminate a running cluster from CLI
+aws emr terminate-clusters --cluster-ids <paste cluster id here. remove these diamond brackets> --region us-east-1
